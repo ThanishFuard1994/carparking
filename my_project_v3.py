@@ -191,7 +191,7 @@ while(True):
 
         except KeyboardInterrupt: # If there is a KeyboardInterrupt (when you press ctrl+c), exit the program and cleanup
         #print("Cleaning up!")
-        display.lcd_clear()
+        #display.lcd_clear()
         
         
         cv2.putText(frame_out, str_on_frame, (5,30), cv2.FONT_HERSHEY_SIMPLEX, #3RD IS BOTTOM-LEFT CORNER OF THE TEXT
