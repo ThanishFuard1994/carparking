@@ -194,8 +194,7 @@ while(True):
         #display.lcd_clear()
         
         
-        cv2.putText(frame_out, str_on_frame, (5,30), cv2.FONT_HERSHEY_SIMPLEX, #3RD IS BOTTOM-LEFT CORNER OF THE TEXT
-                            0.7, (0,0,0), 2, cv2.LINE_AA)
+        cv2.putText(frame_out, str_on_frame, (5,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,0), 2, cv2.LINE_AA)
     if config['text_update']:
         config2 = {
             "apiKey": "AIzaSyA756NiKXSu-bsreoTqgmRP3KDsEK82DrY",
