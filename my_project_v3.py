@@ -1,10 +1,12 @@
+import urllib3
 import yaml
 import numpy as np
 import cv2
 import mouse_example7_best_one_v2
 import sys
 import os, time
-#import lcddriver
+import pyrebase
+import lcddriver
 
 ##########################
 # display = lcddriver.lcd()
@@ -31,13 +33,23 @@ import os, time
 #from subprocess import call
 
 #fn_yaml = r"../datasets/parking_test.yml"
+
+url="http://192.168.43.114:8080"
+    
 fn_yaml = r"../codes/than.yml"
 config = {'text_overlay': True,
           'parking_overlay': True,
+          'text_update': True,
           'parking_detection': True,
           'park_sec_to_wait': 3} 
 
-cap0 = cv2.VideoCapture(0)
+cap0 = cv2.VideoCapture(url+"/video")
+##address = "https://youtu.be/U7HRKjlXK-Y?t=28"
+##cap0.open(address)
+
+if (cap0.isOpened()== False): 
+    print("Error opening video stream or file")
+    
 cap1 = cv2.VideoCapture(1)
 with open(fn_yaml, 'r') as stream:
     parking_data = yaml.safe_load(stream)
@@ -55,8 +67,13 @@ while(True):
     occupied = 0 
     # Read frame-by-frame
     n = n + 1
+
+    ##imgResp = urllib.urlopen(url)
+    ##imgNp = np.array(bytearray(imgResp.read()),dtype=np.uint8)
+    ##frame0 = cv2.imdecode(imgNp,-1)
+    
     ret0, frame0 = cap0.read()
-    ret1, frame1 = cap1.read()
+##    ret1, frame1 = cap1.read()
     if (ret0):
         
         if ret0 == False:
@@ -70,20 +87,20 @@ while(True):
 ##        avg_color = np.average(avg_color_per_row,axis=0)
 ##        frame0[mask !=0] = avg_color
         frame_gray = cv2.cvtColor(frame0, cv2.COLOR_BGR2GRAY)
-
-    if (ret1):
-        #2nd camera
-        if ret1 == False:
-            print("Capture Error")
-            break
-        frame_out = frame1.copy()
-##        lower = (50,50,50)
-##        upper = (80,80,80)
-##        mask = cv2.inRange(frame1, lower, upper)
-##        avg_color_per_row = np.average(frame1, axis=0)
-##        avg_color = np.average(avg_color_per_row,axis=0)
-##        frame1[mask !=0] = avg_color
-        frame_gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
+##
+##    if (ret1):
+##        #2nd camera
+##        if ret1 == False:
+##            print("Capture Error")
+##            break
+##        frame_out = frame1.copy()
+####        lower = (50,50,50)
+####        upper = (80,80,80)
+####        mask = cv2.inRange(frame1, lower, upper)
+####        avg_color_per_row = np.average(frame1, axis=0)
+####        avg_color = np.average(avg_color_per_row,axis=0)
+####        frame1[mask !=0] = avg_color
+##        frame_gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
         
     frame_blur = cv2.medianBlur(frame_gray,3)
     #frame_blur = cv2.GaussianBlur(frame_gray, (5,5), 3)
@@ -111,7 +128,7 @@ while(True):
             total = roi_gray.shape[0] * roi_gray.shape[1]
             ratio = nonzero * 100 / float(total)
             #print(ratio)
-            status = (ratio <= 9) # True --> green
+            status = (ratio <= 30) # True --> green cganged from 9 to 15
             #parking_buffer[ind] equals to numbers of frame count n in below when status changed, value of parking_buffer[ind] will change as n increments
             #(parking_status[ind]) equals FALSE when red i.e occupied else green (true)
             if status != parking_status[ind] and parking_buffer[ind]==None: # ind --> 0,1,2,3,... upto (points -1)
@@ -151,10 +168,13 @@ while(True):
         cv2.rectangle(frame_out, (1, 5), (240, 15),(255,0,0), 85) # top left white rectangle on o/p
         cv2.rectangle(frame_out, (6, 10), (238, 13),(255,127,0), 83)
         cv2.rectangle(frame_out, (6, 10), (235, 10),(255,255,255), 80)
-        str_on_frame = "Spot: %d Occupied: %d" % (spot, occupied)
+        str_on_frame = "Vacant: %d Occupied: %d" % (spot, occupied)
+
+
+        
 
         #Display output in LCD
-        #display = lcddriver.lcd()
+        display = lcddriver.lcd()
 
         # Main body of code
         try:
@@ -170,28 +190,40 @@ while(True):
                 time.sleep(2)                                     # Give time for the message to be read
 
         except KeyboardInterrupt: # If there is a KeyboardInterrupt (when you press ctrl+c), exit the program and cleanup
-            print("Cleaning up!")
-            display.lcd_clear()
+        #print("Cleaning up!")
+        display.lcd_clear()
         
         
         cv2.putText(frame_out, str_on_frame, (5,30), cv2.FONT_HERSHEY_SIMPLEX, #3RD IS BOTTOM-LEFT CORNER OF THE TEXT
                             0.7, (0,0,0), 2, cv2.LINE_AA)
-
+    if config['text_update']:
+        config2 = {
+            "apiKey": "AIzaSyA756NiKXSu-bsreoTqgmRP3KDsEK82DrY",
+            "authDomain": "test-bbd8b.firebaseapp.com",
+            "databaseURL": "https://test-bbd8b.firebaseio.com",
+            "projectId": "test-bbd8b",
+            "storageBucket": "test-bbd8b.appspot.com",
+            "messagingSenderId": "465651733402"
+        }
+        firebase = pyrebase.initialize_app(config2)
+        db = firebase.database()
+        db.child("carparking").child("car").update({"Occupied":"%d" % (occupied)})
+        db.child("carparking").child("car").update({"Vacant":"%d" % (spot)})
     # Display video
     cv2.imshow('Parking spot detection', frame_out)
     #cv2.imshow('canny', img_canny)
     #cv2.imshow('thresh', thresh)
     cv2.imshow('thresh2', thresh2)
-    cv2.imshow('blur', frame_blur)
+    #cv2.imshow('blur', frame_blur)
     #cv2.imshow('gray', frame_gray)
     k = cv2.waitKey(1)
     if (k == ord('q')):
         break
     elif (k == ord('c')):
         pd0 = mouse_example7_best_one_v2.PolygonDrawer("Parking Spot Detection", frame0)
-        pd1 = mouse_example7_best_one_v2.PolygonDrawer("Parking Spot Detection", frame1)
+        #pd1 = mouse_example7_best_one_v2.PolygonDrawer("Parking Spot Detection", frame1)
         pd0.run()
-        pd1.run()
+        #pd1.run()
         cap.release()
         cv2.destroyAllWindows()
         #os.execl(sys.executable, sys.executable, *sys.argv)
