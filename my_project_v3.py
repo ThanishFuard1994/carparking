@@ -9,24 +9,24 @@ import pyrebase
 import lcddriver
 
 ##########################
-# display = lcddriver.lcd()
-
-# # Main body of code
-# try:
-    # while True:
-        # # Remember that your sentences can only be 16 characters long!
-        # print("Writing to display")
-        # display.lcd_display_string("Greetings Human!", 1) # Write line of text to first line of display
-        # display.lcd_display_string("Demo Pi Guy code", 2) # Write line of text to second line of display
-        # time.sleep(2)                                     # Give time for the message to be read
-        # display.lcd_display_string("I am a display!", 1)  # Refresh the first line of display with a different message
-        # time.sleep(2)                                     # Give time for the message to be read
-        # display.lcd_clear()                               # Clear the display of any data
-        # time.sleep(2)                                     # Give time for the message to be read
-
-# except KeyboardInterrupt: # If there is a KeyboardInterrupt (when you press ctrl+c), exit the program and cleanup
-    # print("Cleaning up!")
-    # display.lcd_clear()
+##display = lcddriver.lcd()
+##
+## # Main body of code
+##try:
+##    while True:
+##        # # Remember that your sentences can only be 16 characters long!
+##        print("Writing to display")
+##        display.lcd_display_string("Greetings Human!", 1) # Write line of text to first line of display
+##        display.lcd_display_string("Demo Pi Guy code", 2) # Write line of text to second line of display
+##        time.sleep(2)                                     # Give time for the message to be read
+##        display.lcd_display_string("I am a display!", 1)  # Refresh the first line of display with a different message
+##        time.sleep(2)                                     # Give time for the message to be read
+##        display.lcd_clear()                               # Clear the display of any data
+##        time.sleep(2)                                     # Give time for the message to be read
+##
+##except KeyboardInterrupt: # If there is a KeyboardInterrupt (when you press ctrl+c), exit the program and cleanup
+##    print("Cleaning up!")
+##    display.lcd_clear()
 
 ################################
 
@@ -38,12 +38,15 @@ url="http://192.168.43.114:8080"
     
 fn_yaml = r"../codes/than.yml"
 config = {'text_overlay': True,
-          'parking_overlay': True,
+          'lcd_display': True,
+          'parking_overlay': True, 
           'text_update': True,
           'parking_detection': True,
           'park_sec_to_wait': 3} 
 
 cap0 = cv2.VideoCapture(url+"/video")
+cap0.set(3, 640)
+cap0.set(4, 480)
 ##address = "https://youtu.be/U7HRKjlXK-Y?t=28"
 ##cap0.open(address)
 
@@ -75,7 +78,6 @@ while(True):
     ret0, frame0 = cap0.read()
 ##    ret1, frame1 = cap1.read()
     if (ret0):
-        
         if ret0 == False:
             print("Capture Error")
             break
@@ -171,17 +173,15 @@ while(True):
         str_on_frame = "Vacant: %d Occupied: %d" % (spot, occupied)
 
 
-        
-
-        #Display output in LCD
+    if config['lcd_display']:
         display = lcddriver.lcd()
 
-        # Main body of code
+         # Main body of code
         try:
             while True:
-                # Remember that your sentences can only be 16 characters long!
+                # # Remember that your sentences can only be 16 characters long!
                 print("Writing to display")
-                display.lcd_display_string(str_on_frame, 1) # Write line of text to first line of display
+                display.lcd_display_string("Greetings Human!", 1) # Write line of text to first line of display
                 display.lcd_display_string("Demo Pi Guy code", 2) # Write line of text to second line of display
                 time.sleep(2)                                     # Give time for the message to be read
                 display.lcd_display_string("I am a display!", 1)  # Refresh the first line of display with a different message
@@ -190,11 +190,11 @@ while(True):
                 time.sleep(2)                                     # Give time for the message to be read
 
         except KeyboardInterrupt: # If there is a KeyboardInterrupt (when you press ctrl+c), exit the program and cleanup
-        #print("Cleaning up!")
-        #display.lcd_clear()
+            print("Cleaning up!")
+            display.lcd_clear()
         
         
-        cv2.putText(frame_out, str_on_frame, (5,30), cv2.FONT_HERSHEY_SIMPLEX, 
+        cv2.putText(frame_out, str_on_frame, (5,30), cv2.FONT_HERSHEY_SIMPLEX, #3RD IS BOTTOM-LEFT CORNER OF THE TEXT
                             0.7, (0,0,0), 2, cv2.LINE_AA)
     if config['text_update']:
         config2 = {
@@ -209,13 +209,22 @@ while(True):
         db = firebase.database()
         db.child("carparking").child("car").update({"Occupied":"%d" % (occupied)})
         db.child("carparking").child("car").update({"Vacant":"%d" % (spot)})
+        
+        storage = firebase.storage()
+        path_on_cloud = "images/foo.jpg"
+        path_local = "my_image.jpg"
+        storage.child(path_on_cloud).put(path_local)
+        #storage.child(path_on_cloud).download("test_download.jpg")
     # Display video
     cv2.imshow('Parking spot detection', frame_out)
     #cv2.imshow('canny', img_canny)
     #cv2.imshow('thresh', thresh)
-    cv2.imshow('thresh2', thresh2)
+    #cv2.imshow('thresh2', thresh2)
     #cv2.imshow('blur', frame_blur)
     #cv2.imshow('gray', frame_gray)
+
+    cv2.imwrite("my_image.jpg", frame_out)
+    
     k = cv2.waitKey(1)
     if (k == ord('q')):
         break
