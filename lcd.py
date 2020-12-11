@@ -1,7 +1,6 @@
 import urllib3
 import yaml
 import numpy as np
-import cv2
 import mouse_example7_best_one_v2
 import sys
 import os, time
