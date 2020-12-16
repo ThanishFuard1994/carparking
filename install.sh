@@ -31,4 +31,3 @@ echo "Should be now all finished. Please press any key to now reboot. After rebo
 echo "'sudo python demo_lcd.py' from this directory"
 read -n1 -s
 sudo reboot
-l
