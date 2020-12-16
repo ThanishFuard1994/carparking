@@ -5,7 +5,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 echo "Automated Installer Program For I2C LCD Screens"
-echo "Installer by Ryanteck LTD. Cloned and tweaked by Matthew Timmons-Brown for The Raspberry Pi Guy YouTube tutorial"
+echo "Installer by Thanish Fuard"
 echo "Updating APT & Installing python-smbus, if password is asked by sudo please enter it"
 apt-get update
 apt-get install python-smbus -y
