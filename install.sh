@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 if [ "$(id -u)" != "0" ]; then
 	echo "Please re-run as sudo."
 	exit 1
