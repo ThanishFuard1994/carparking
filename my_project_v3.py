@@ -174,7 +174,8 @@ while(True):
 
 
     if config['lcd_display']:
-        str_on_frame = "Vacant: %d" % (spot)
+        str_on_frame = "Vacant: %d Occupied: %d" % (spot, occupied)
+	#str_on_frame = "Vacant: %d" % (spot)
 	#str_on_frame2 = "Occupied: %d" % (occupied)
 	# Load the driver and set it to "display"
 	# If you use something from the driver library use the "display." prefix first
