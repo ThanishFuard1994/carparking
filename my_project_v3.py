@@ -175,7 +175,7 @@ while(True):
 
     if config['lcd_display']:
         str_on_frame = "Vacant: %d" % (spot)
-	str_on_frame2 = "Occupied: %d" % (occupied)
+	#str_on_frame2 = "Occupied: %d" % (occupied)
 	# Load the driver and set it to "display"
 	# If you use something from the driver library use the "display." prefix first
 	display = lcddriver.lcd()
@@ -186,10 +186,10 @@ while(True):
 			# Remember that your sentences can only be 16 characters long!
         		print("Writing to display")
         		display.lcd_display_string(str_on_frame, 1) # Write line of text to first line of display
-        		display.lcd_display_string(str_on_frame2, 2) # Write line of text to second line of display
+        		#display.lcd_display_string(str_on_frame2, 2) # Write line of text to second line of display
         		time.sleep(2)                                     # Give time for the message to be read
         		display.lcd_display_string(str_on_frame, 1) # Write line of text to first line of display  # Refresh the first line of display with a different message
-        		display.lcd_display_string(str_on_frame2, 2)
+        		#display.lcd_display_string(str_on_frame2, 2)
         		time.sleep(2)                                     # Give time for the message to be read
         		display.lcd_clear()
         		time.sleep(2)                                     # Give time for the message to be read
