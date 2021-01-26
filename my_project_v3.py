@@ -36,7 +36,7 @@ import lcddriver
 
 url="http://192.168.43.114:8080"
     
-fn_yaml = r"../than.yml"
+fn_yaml = r"../carparking/than.yml"
 config = {'text_overlay': True,
           'lcd_display': True,
           'parking_overlay': True, 
