@@ -34,7 +34,7 @@ import lcddriver
 
 #fn_yaml = r"../datasets/parking_test.yml"
 
-url="http://192.168.43.114:8080"
+#url="http://192.168.43.114:8080"
     
 fn_yaml = r"../carparking/than.yml"
 config = {'text_overlay': True,
@@ -44,7 +44,8 @@ config = {'text_overlay': True,
           'parking_detection': True,
           'park_sec_to_wait': 3} 
 
-cap0 = cv2.VideoCapture(url+"/video")
+cap0= cv2.VideoCapture('../carparking/carparkingcam.mp4')
+#ap0 = cv2.VideoCapture(url+"/video")
 cap0.set(3, 640)
 cap0.set(4, 480)
 ##address = "https://youtu.be/U7HRKjlXK-Y?t=28"
