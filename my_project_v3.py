@@ -44,7 +44,11 @@ config = {'text_overlay': True,
           'parking_detection': True,
           'park_sec_to_wait': 3} 
 
-cap0= cv2.VideoCapture('../carparking/carparkingcam.mp4')
+rtsp = "rtsp://192.168.43.3:8080/video/h264_ulaw.sdp"
+cap0 = cv2.VideoCapture()
+cap0.open(rtsp)
+
+#cap0= cv2.VideoCapture('../carparking/carparkingcam.mp4')
 #ap0 = cv2.VideoCapture(url+"/video")
 cap0.set(3, 640)
 cap0.set(4, 480)
